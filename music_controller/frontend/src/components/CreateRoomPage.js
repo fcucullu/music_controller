@@ -1,15 +1,17 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { FormLabel } from "@material-ui/core";
+import {
+  Grid,
+  Typography,
+  TextField,
+  FormHelperText,
+  FormControl,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+} from "@material-ui/core";
 
 export default class CreateRoomPage extends Component {
   defaultVotes = 2;
@@ -21,24 +23,25 @@ export default class CreateRoomPage extends Component {
       votesToSkip: this.defaultVotes,
     };
 
-    this.handleRoomButtonPressed = this.handleRoomButtonPressed.bind(this);
-    this.handleVotesChange = this.handleVotesChange.bind(this);
-    this.handleGuestCanPauseChange = this.handleGuestCanPauseChange.bind(this);
+    this._handleRoomButtonPressed = this._handleRoomButtonPressed.bind(this);
+    this._handleVotesChange = this._handleVotesChange.bind(this);
+    this._handleGuestCanPauseChange =
+      this._handleGuestCanPauseChange.bind(this);
   }
 
-  handleVotesChange(e) {
+  _handleVotesChange(e) {
     this.setState({
       votesToSkip: e.target.value,
     });
   }
 
-  handleGuestCanPauseChange(e) {
+  _handleGuestCanPauseChange(e) {
     this.setState({
       guestCanPause: e.target.value === "true" ? true : false,
     });
   }
 
-  handleRoomButtonPressed() {
+  _handleRoomButtonPressed() {
     const requestOptions = {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -49,19 +52,19 @@ export default class CreateRoomPage extends Component {
     };
     fetch("/api/create-room", requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => this.props.history.push("/room/" + data.code));
   }
 
   render() {
     return (
-      <Grid container spacing={1}>
-        <Grid item xs={12} align="center">
+      <Grid container spacing={1} align="center">
+        <Grid item xs={12}>
           <Typography component="h4" variant="h4">
-            Create a room!
+            Create A Room
           </Typography>
         </Grid>
 
-        <Grid item xs={12} align="center">
+        <Grid item xs={12}>
           <FormControl component="fieldset">
             <FormHelperText>
               <span align="center">Guest control of playback state</span>
@@ -69,7 +72,7 @@ export default class CreateRoomPage extends Component {
             <RadioGroup
               row
               defaultValue="true"
-              onChange={this.handleGuestCanPauseChange}
+              onChange={this._handleGuestCanPauseChange}
             >
               <FormControlLabel
                 value="true"
@@ -86,30 +89,30 @@ export default class CreateRoomPage extends Component {
             </RadioGroup>
           </FormControl>
         </Grid>
-        <Grid item xs={12} align="center">
+        <Grid item xs={12}>
           <FormControl>
             <TextField
               required={true}
               type="number"
-              onChange={this.handleVotesChange}
+              onChange={this._handleVotesChange}
               defaultValue={this.defaultVotes}
               inputProps={{ min: 1, style: { textAlign: "center" } }}
             />
             <FormHelperText>
-              <span align="center">Votes required to skip song</span>
+              <span>Votes required to skip song</span>
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} align="center">
+        <Grid item xs={12}>
           <Button
             color="primary"
             variant="contained"
-            onClick={this.handleRoomButtonPressed}
+            onClick={this._handleRoomButtonPressed}
           >
             Create a room
           </Button>
         </Grid>
-        <Grid item xs={12} align="center">
+        <Grid item xs={12}>
           <Button color="secondary" variant="contained" to="/" component={Link}>
             Back
           </Button>

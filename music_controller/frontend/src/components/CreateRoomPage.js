@@ -1,17 +1,14 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
-import {
-  Grid,
-  Typography,
-  TextField,
-  FormHelperText,
-  FormControl,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
-} from "@material-ui/core";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 export default class CreateRoomPage extends Component {
   defaultVotes = 2;
@@ -23,28 +20,27 @@ export default class CreateRoomPage extends Component {
       votesToSkip: this.defaultVotes,
     };
 
-    this._handleRoomButtonPressed = this._handleRoomButtonPressed.bind(this);
-    this._handleVotesChange = this._handleVotesChange.bind(this);
-    this._handleGuestCanPauseChange =
-      this._handleGuestCanPauseChange.bind(this);
+    this.handleRoomButtonPressed = this.handleRoomButtonPressed.bind(this);
+    this.handleVotesChange = this.handleVotesChange.bind(this);
+    this.handleGuestCanPauseChange = this.handleGuestCanPauseChange.bind(this);
   }
 
-  _handleVotesChange(e) {
+  handleVotesChange(e) {
     this.setState({
       votesToSkip: e.target.value,
     });
   }
 
-  _handleGuestCanPauseChange(e) {
+  handleGuestCanPauseChange(e) {
     this.setState({
       guestCanPause: e.target.value === "true" ? true : false,
     });
   }
 
-  _handleRoomButtonPressed() {
+  handleRoomButtonPressed() {
     const requestOptions = {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         votes_to_skip: this.state.votesToSkip,
         guest_can_pause: this.state.guestCanPause,
@@ -63,16 +59,15 @@ export default class CreateRoomPage extends Component {
             Create A Room
           </Typography>
         </Grid>
-
         <Grid item xs={12}>
           <FormControl component="fieldset">
-            <FormHelperText>
-              <span align="center">Guest control of playback state</span>
+            <FormHelperText style={{ textAlign: "center" }}>
+              Guest Control of Playback State
             </FormHelperText>
             <RadioGroup
               row
               defaultValue="true"
-              onChange={this._handleGuestCanPauseChange}
+              onChange={this.handleGuestCanPauseChange}
             >
               <FormControlLabel
                 value="true"
@@ -94,12 +89,15 @@ export default class CreateRoomPage extends Component {
             <TextField
               required={true}
               type="number"
-              onChange={this._handleVotesChange}
+              onChange={this.handleVotesChange}
               defaultValue={this.defaultVotes}
-              inputProps={{ min: 1, style: { textAlign: "center" } }}
+              inputProps={{
+                min: 1,
+                style: { textAlign: "center" },
+              }}
             />
-            <FormHelperText>
-              <span>Votes required to skip song</span>
+            <FormHelperText style={{ textAlign: "center" }}>
+              Votes Required To Skip Song
             </FormHelperText>
           </FormControl>
         </Grid>
@@ -107,9 +105,9 @@ export default class CreateRoomPage extends Component {
           <Button
             color="primary"
             variant="contained"
-            onClick={this._handleRoomButtonPressed}
+            onClick={this.handleRoomButtonPressed}
           >
-            Create a room
+            Create A Room
           </Button>
         </Grid>
         <Grid item xs={12}>

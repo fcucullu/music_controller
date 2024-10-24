@@ -18,9 +18,44 @@ body {
   height: 100%;
 }
 
+.custom-textfield {
+  background-color: #f0f0f0; /* Light grey background */
+  border-radius: 5px; /* Optional: Rounded corners */
+}
+
+/* Center the content */
 .center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  z-index: 1; /* Ensure content stays above the background */
+  display: flex;
+  flex-direction: column; /* Center content both vertically and horizontally */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Full-screen animated background */
+.background {
+  position: fixed;  /* Make sure the background fills the entire screen */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+  background-size: 400% 400%;
+  animation: Gradient 15s ease infinite;
+  z-index: -1; /* Keep the background behind everything */
+}
+
+/* Keyframes for gradient animation */
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

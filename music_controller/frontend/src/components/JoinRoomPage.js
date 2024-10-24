@@ -25,6 +25,7 @@ export default class RoomJoinPage extends Component {
         <Grid item xs={12}>
           <TextField
             id="room-code"
+            className="custom-textfield"
             error={this.state.error}
             label="Code"
             placeholder="Enter a Room Code"

@@ -59,7 +59,7 @@ export default class CreateRoomPage extends Component {
       const data = await response.json();
       this.props.history.push("/room/" + data.code);
     } catch (error) {
-      this.setState({ errorMsg: error.message });
+      this.setState({ errorMsg: error.message, successMsg: ""  });
     }
   };
 
@@ -76,10 +76,10 @@ export default class CreateRoomPage extends Component {
       };
       const response = await fetch("/api/update-room", requestOptions);
       if (!response.ok) throw new Error("Error updating room...");
-      this.setState({ successMsg: "Room updated successfully!" });
+      this.setState({ successMsg: "Room updated successfully!", errorMsg: ""  });
       this.props.updateCallback();
     } catch (error) {
-      this.setState({ errorMsg: error.message });
+      this.setState({ errorMsg: error.message, successMsg: ""  });
     }
   };
 

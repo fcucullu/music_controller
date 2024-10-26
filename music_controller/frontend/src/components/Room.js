@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { Grid, Button, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Button,
+  Typography,
+} from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
 
 export default class Room extends Component {
@@ -18,7 +22,7 @@ export default class Room extends Component {
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
     this.getRoomDetails = this.getRoomDetails.bind(this);
-    this.authenticatedSpotify = this.authenticatedSpotify.bind(this);
+    this.authenticateSpotify = this.authenticateSpotify.bind(this);
     this.getRoomDetails();
   }
 
@@ -38,12 +42,12 @@ export default class Room extends Component {
           isHost: data.is_host,
         });
         if (this.state.isHost) {
-          this.authenticatedSpotify();
+          this.authenticateSpotify();
         }
       });
   }
 
-  authenticatedSpotify() {
+  authenticateSpotify() {
     fetch("/spotify/is-authenticated")
       .then((response) => response.json())
       .then((data) => {
@@ -84,7 +88,10 @@ export default class Room extends Component {
             votesToSkip={this.state.votesToSkip}
             guestCanPause={this.state.guestCanPause}
             roomCode={this.roomCode}
-            updateCallback={this.getRoomDetails}
+            updateCallback={() => {
+              this.getRoomDetails(); // Get room details
+              this.updateShowSettings(false); // Close settings
+            }}
           />
         </Grid>
         <Grid item xs={12} align="center">

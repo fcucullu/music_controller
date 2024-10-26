@@ -5,7 +5,6 @@ import {
   Card,
   IconButton,
   LinearProgress,
-  FormGroup,
 } from "@material-ui/core";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
@@ -20,31 +19,33 @@ export default class MusicPlayer extends Component {
     const songProgress = (this.props.time / this.props.duration) * 100;
 
     return (
-      <Grid item xs={12} align="center">
-        <Card style={{ margin: "0 10px" }}>
-          <Grid container alignItems="center">
-            <Grid item align="center" xs={4}>
-              <img src={this.props.image_url} height="100%" width="100%" />
+      <Grid container justifyContent="center"> {/* Center container */}
+        <Grid item xs={12} md={6} lg={6}> {/* Half-width on larger screens */}
+          <Card style={{ margin: "0 10px" }}> {/* Margin for spacing */}
+            <Grid container alignItems="center">
+              <Grid item xs={4} align="center">
+                <img src={this.props.image_url} height="100%" width="100%" />
+              </Grid>
+              <Grid item xs={8} align="center">
+                <Typography component="h6" variant="h6">
+                  {this.props.title}
+                </Typography>
+                <Typography color="textSecondary" variant="subtitle1">
+                  {this.props.artist}
+                </Typography>
+                <div>
+                  <IconButton>
+                    {this.props.is_playing ? <PauseIcon /> : <PlayArrowIcon />}
+                  </IconButton>
+                  <IconButton>
+                    <SkipNextIcon />
+                  </IconButton>
+                </div>
+              </Grid>
             </Grid>
-            <Grid item align="center" xs={8}>
-              <Typography component="h5" variant="h5">
-                {this.props.title}
-              </Typography>
-              <Typography color="textSecondary" variant="subtitle1">
-                {this.props.artist}
-              </Typography>
-              <div>
-                <IconButton>
-                  {this.props.is_playing ? <PauseIcon /> : <PlayArrowIcon />}
-                </IconButton>
-                <IconButton>
-                  <SkipNextIcon />
-                </IconButton>
-              </div>
-            </Grid>
-          </Grid>
-          <LinearProgress variant="determinate" value={songProgress} />
-        </Card>
+            <LinearProgress variant="determinate" value={songProgress} />
+          </Card>
+        </Grid>
       </Grid>
     );
   }

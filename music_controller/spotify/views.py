@@ -57,46 +57,77 @@ class IsAuthenticated(APIView):
     
 
 class CurrentSong(APIView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.song = {
+            'title': "No song playing",
+            'artist': "N/A",
+            'duration': 0,
+            'time': 0,
+            'image_url': "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
+            'is_playing': False,
+            'votes': 0,
+            'id': None
+        }
+    
     def get(self, request, format=None):
         room_code = self.request.session.get('room_code')
         room = Room.objects.filter(code=room_code)
+        
         if room.exists():
             room = room[0]
         else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
+            return Response(self.song, status=status.HTTP_404_NOT_FOUND)  # Return default if no room
+        
         host = room.host
         endpoint = "player/currently-playing"
         response = execute_spotify_api_request(host, endpoint)
         
         if 'error' in response or 'item' not in response:
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
+            return Response(self.song, status=status.HTTP_200_OK)  # Return default if no song playing
 
+        # If there's a song, populate with real data
         item = response.get('item')
         duration = item.get('duration_ms')
         progress = response.get('progress_ms')
         album_cover = item.get('album').get('images')[0].get('url')
         is_playing = response.get('is_playing')
         song_id = item.get('id')
-        
-        artists_string = ""
-        
-        for i, artist in enumerate(item.get('artists')):
-            if i > 0:
-                artists_string += ", "
-            name = artist.get('name')
-            artists_string += name
-        
-        song = {
+
+        # Get artist names
+        artists_string = ", ".join(artist.get('name') for artist in item.get('artists'))
+
+        # Set song details
+        self.song.update({
             'title': item.get('name'),
             'artist': artists_string,
             'duration': duration,
             'time': progress,
             'image_url': album_cover,
             'is_playing': is_playing,
-            'votes': 0,
             'id': song_id
-        }
+        })
+
+        return Response(self.song, status=status.HTTP_200_OK)
 
 
-        return Response(song, status=status.HTTP_200_OK)
-
+    
+class PauseSong(APIView):
+    def put(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            pause_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
+    
+class PlaySong(APIView):
+    def put(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        if self.request.session.session_key == room.host or room.guest_can_pause:
+            play_song(room.host)
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        
+        return Response({}, status=status.HTTP_403_FORBIDDEN)

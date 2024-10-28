@@ -69,12 +69,10 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     if post_:
         post(BASE_URL + endpoint, headers=headers)
     if put_:
-        post(BASE_URL + endpoint, headers=headers)
-        print(headers)
-        print(BASE_URL + endpoint)
+        put(BASE_URL + endpoint, headers=headers)
 
     response = get(BASE_URL + endpoint, {}, headers=headers)
-    print(response)
+    
     try:
         return response.json()
     except:
@@ -87,4 +85,7 @@ def play_song(session_id):
 
 def pause_song(session_id):
     return execute_spotify_api_request(session_id, "player/pause", put_=True)
+
+def skip_song(session_id):
+    return execute_spotify_api_request(session_id, "player/next", post_=True)
 

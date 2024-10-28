@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from .utils import *
 from api.models import Room
 from .models import Vote
-
+from .serializers import VoteSerializer
 
 class AuthURL(APIView):
     def get(self, request, fornat=None):
@@ -99,8 +99,11 @@ class CurrentSong(APIView):
         # Get artist names
         artists_string = ", ".join(artist.get('name') for artist in item.get('artists'))
 
-        # Set song details
+         # Serialize votes
         votes = Vote.objects.filter(room=room, song_id=song_id)
+        serialized_votes = VoteSerializer(votes, many=True).data
+
+        # Set song details
         self.song.update({
             'title': item.get('name'),
             'artist': artists_string,
@@ -108,7 +111,7 @@ class CurrentSong(APIView):
             'time': progress,
             'image_url': album_cover,
             'is_playing': is_playing,
-            'votes': votes,
+            'votes': len(serialized_votes),
             'votes_required': room.votes_to_skip,
             'id': song_id
         })
@@ -119,11 +122,15 @@ class CurrentSong(APIView):
     
     def update_room_song(self, room, song_id):
         current_song = room.current_song
+        if self.song['votes'] >= self.song['votes_required']:
+            votes = Vote.objects.filter(room=room).delete()
+            skip_song(room.host)
 
         if current_song != song_id:
             room.current_song = song_id
             room.save(update_fields=['current_song'])
             votes = Vote.objects.filter(room=room).delete()    # FOR LATER CHECK WHEN PLAYLIST IMPLEMENTED
+            
 
     
 class PauseSong(APIView):
@@ -152,9 +159,8 @@ class SkipSong(APIView):
         room_code = self.request.session.get('room_code')
         room = Room.objects.filter(code=room_code)[0]
         votes = Vote.objects.filter(room=room, song_id=room.current_song)
-        votes_needed = room.votes_to_skip
 
-        if self.request.session.session_key == room.host or len(votes) + 1 >= votes_needed:
+        if self.request.session.session_key == room.host:
             votes.delete()
             skip_song(room.host)
         else:

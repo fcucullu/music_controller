@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
-import MusicPlayer  from "./MusicPlayer";
+import MusicPlayer from "./MusicPlayer";
 
 export default class Room extends Component {
   constructor(props) {
@@ -131,15 +131,13 @@ export default class Room extends Component {
 
   renderSettingsButton() {
     return (
-      <Grid item xs={12} align="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.updateShowSettings(true)}
-        >
-          Settings
-        </Button>
-      </Grid>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => this.updateShowSettings(true)}
+      >
+        Settings
+      </Button>
     );
   }
 
@@ -154,9 +152,20 @@ export default class Room extends Component {
             Room Code: {this.roomCode}
           </Typography>
         </Grid>
-        <MusicPlayer {...this.state.song}/>
-        {this.state.isHost ? this.renderSettingsButton() : null}
-        <Grid item xs={12} align="center">
+        <MusicPlayer {...this.state.song} />
+
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex", // Apply flex here to the Grid container
+            justifyContent: "center", // Center the buttons
+            gap: "10px", // Space between buttons
+          }}
+        >
+          {/* Remove ButtonGroup and apply flex directly */}
+          {this.state.isHost ? this.renderSettingsButton() : null}
+
           <Button
             variant="contained"
             color="secondary"

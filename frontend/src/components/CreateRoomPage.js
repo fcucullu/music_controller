@@ -59,7 +59,7 @@ export default class CreateRoomPage extends Component {
       const data = await response.json();
       this.props.history.push("/room/" + data.code);
     } catch (error) {
-      this.setState({ errorMsg: error.message, successMsg: ""  });
+      this.setState({ errorMsg: error.message, successMsg: "" });
     }
   };
 
@@ -76,10 +76,10 @@ export default class CreateRoomPage extends Component {
       };
       const response = await fetch("/api/update-room", requestOptions);
       if (!response.ok) throw new Error("Error updating room...");
-      this.setState({ successMsg: "Room updated successfully!", errorMsg: ""  });
+      this.setState({ successMsg: "Room updated successfully!", errorMsg: "" });
       this.props.updateCallback();
     } catch (error) {
-      this.setState({ errorMsg: error.message, successMsg: ""  });
+      this.setState({ errorMsg: error.message, successMsg: "" });
     }
   };
 
@@ -152,8 +152,8 @@ export default class CreateRoomPage extends Component {
         </Grid>
         <Grid item xs={12} align="center">
           <FormControl component="fieldset">
-            <FormHelperText style={{ textAlign: "center" }}>
-              Guest Control of Playback State
+            <FormHelperText style={{ textAlign: "center", fontSize: "18px" }}>
+              Guest Control Play/Pause?
             </FormHelperText>
 
             <RadioGroup
@@ -176,23 +176,44 @@ export default class CreateRoomPage extends Component {
             </RadioGroup>
           </FormControl>
         </Grid>
-        <Grid item xs={12} align="center">
-          <FormControl>
-            <TextField
-              required
-              type="number"
-              onChange={this.handleVotesChange}
-              value={this.state.votesToSkip} // Changed to controlled
-              inputProps={{
-                min: 1,
-                style: { textAlign: "center" },
-              }}
-            />
-            <FormHelperText style={{ textAlign: "center" }}>
+
+        <Grid
+          item
+          xs={12}
+          align="center"
+        >
+          <FormControl component="fieldset">
+            <FormHelperText style={{ textAlign: "center", fontSize: "18px" }}>
               Votes Required To Skip Song
             </FormHelperText>
+
+            <RadioGroup
+              row
+              value={this.state.votesToSkip.toString()}
+              onChange={this.handleVotesChange}
+            >
+              <FormControlLabel
+                value="1"
+                control={<Radio color="primary" />}
+                label="1"
+                labelPlacement="bottom"
+              />
+              <FormControlLabel
+                value="2"
+                control={<Radio color="primary" />}
+                label="2"
+                labelPlacement="bottom"
+              />
+              <FormControlLabel
+                value="3"
+                control={<Radio color="primary" />}
+                label="3"
+                labelPlacement="bottom"
+              />
+            </RadioGroup>
           </FormControl>
         </Grid>
+
         {this.props.update
           ? this.renderUpdateButtons()
           : this.renderCreateButtons()}

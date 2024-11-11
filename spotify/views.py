@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from .credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework import status
@@ -8,6 +7,7 @@ from .utils import *
 from api.models import Room
 from .models import Vote
 from .serializers import VoteSerializer
+from music_controller.settings import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 class AuthURL(APIView):
     def get(self, request, fornat=None):

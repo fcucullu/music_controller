@@ -32,7 +32,6 @@ export default class Playlist extends Component {
         });
       })
       .catch((error) => {
-        console.error("Error fetching playlist:", error);
         this.setState({ isLoading: false });
       });
   };
@@ -49,7 +48,7 @@ export default class Playlist extends Component {
         {/* Center container */}
         {playlist.length > 0 ? (
           playlist.map((song) => (
-            <Grid item xs={12} md={7} lg={7} key={song.id} justifyContent="center" style={{ paddingBottom: "10px" }}>
+            <Grid item xs={12} md={7} lg={7} key={song.id} style={{ paddingBottom: "10px" }}>
               {/* Song item */}
               <Card style={{ margin: "0 10px" }}>
                 {/* Card margin */}

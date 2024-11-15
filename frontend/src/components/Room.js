@@ -87,7 +87,6 @@ export default class Room extends Component {
       })
       .then((data) => {
         this.setState({ song: data });
-        console.log(data);
       });
   }
 
@@ -157,6 +156,27 @@ export default class Room extends Component {
         </Grid>
 
         <Playlist {...this.state.queue} />
+
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex", // Apply flex here to the Grid container
+            justifyContent: "center", // Center the buttons
+            gap: "10px", // Space between buttons
+            paddingBottom: '10px'
+          }}
+        >
+          {this.state.isHost ? this.renderSettingsButton() : null}
+
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={this.leaveButtonPressed}
+          >
+            Leave Room
+          </Button>
+        </Grid>
       </Grid>
     );
   }

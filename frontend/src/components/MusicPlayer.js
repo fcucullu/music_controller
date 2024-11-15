@@ -48,7 +48,7 @@ export default class MusicPlayer extends Component {
       <Grid container justifyContent="center">
         {" "}
         {/* Center container */}
-        <Grid item xs={12} md={6} lg={6}>
+        <Grid item xs={12} md={7} lg={7}>
           {" "}
           {/* Half-width on larger screens */}
           <Card style={{ margin: "0 10px" }}>

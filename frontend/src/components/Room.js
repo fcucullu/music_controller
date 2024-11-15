@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
 import MusicPlayer from "./MusicPlayer";
+import Playlist from "./Playlist";
 
 export default class Room extends Component {
   constructor(props) {
@@ -11,14 +12,20 @@ export default class Room extends Component {
       guestCanPause: false,
       isHost: false,
       showSettings: false,
+      showPlaylist: false,
       spotifyAuthenticated: false,
       song: {},
     };
     this.roomCode = this.props.match.params.roomCode;
     this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
+    this.addSongButtonPressed = this.addSongButtonPressed.bind(this);
+    this.playlistButtonPressed = this.playlistButtonPressed.bind(this);
+
     this.updateShowSettings = this.updateShowSettings.bind(this);
+    this.updateShowPlaylist = this.updateShowPlaylist.bind(this);
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
+
     this.getRoomDetails = this.getRoomDetails.bind(this);
     this.authenticateSpotify = this.authenticateSpotify.bind(this);
     this.getCurrentSong = this.getCurrentSong.bind(this);
@@ -95,6 +102,72 @@ export default class Room extends Component {
     });
   }
 
+  addSongButtonPressed() {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch("/api/leave-room", requestOptions).then((_response) => {
+      this.props.leaveRoomCallback();
+      this.props.history.push("/");
+    });
+  }
+
+  //############### PLAYLIST SECTION ##########################
+  playlistButtonPressed() {
+    this.updateShowPlaylist(true);
+  }
+
+  renderPlaylist() {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Typography variant="h4" component="h4">
+            Room Code: {this.roomCode}
+          </Typography>
+        </Grid>
+        <MusicPlayer {...this.state.song} />
+
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex", // Apply flex here to the Grid container
+            justifyContent: "center", // Center the buttons
+            gap: "10px", // Space between buttons
+            paddingBottom: "10px",
+            paddingTop: "10px",
+          }}
+        >
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "#23A6D5", color: "#fff" }}
+            onClick={() => this.updateShowPlaylist(false)} // Close Playlist
+          >
+            Close Playlist
+          </Button>
+
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "#23D5AB", color: "#fff" }}
+            onClick={this.addSongButtonPressed}
+          >
+            Add song
+          </Button>
+        </Grid>
+
+        <Playlist {...this.state.queue} />
+      </Grid>
+    );
+  }
+
+  updateShowPlaylist(value) {
+    this.setState({
+      showPlaylist: value,
+    });
+  }
+
+  //SETTINGS SECTION
   updateShowSettings(value) {
     this.setState({
       showSettings: value,
@@ -141,9 +214,13 @@ export default class Room extends Component {
     );
   }
 
+  //#####################################   RENDER SECTION   #####################################
   render() {
     if (this.state.showSettings) {
       return this.renderSettings();
+    }
+    if (this.state.showPlaylist) {
+      return this.renderPlaylist();
     }
     return (
       <Grid container spacing={1}>
@@ -161,9 +238,36 @@ export default class Room extends Component {
             display: "flex", // Apply flex here to the Grid container
             justifyContent: "center", // Center the buttons
             gap: "10px", // Space between buttons
+            paddingBottom: "10px",
+            paddingTop: "10px",
           }}
         >
-          {/* Remove ButtonGroup and apply flex directly */}
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "#23A6D5", color: "#fff" }}
+            onClick={this.playlistButtonPressed}
+          >
+            See Playlist
+          </Button>
+
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "#23D5AB", color: "#fff" }}
+            onClick={this.addSongButtonPressed}
+          >
+            Add song
+          </Button>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          style={{
+            display: "flex", // Apply flex here to the Grid container
+            justifyContent: "center", // Center the buttons
+            gap: "10px", // Space between buttons
+          }}
+        >
           {this.state.isHost ? this.renderSettingsButton() : null}
 
           <Button

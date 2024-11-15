@@ -169,3 +169,59 @@ class SkipSong(APIView):
             vote.save()
 
         return Response({}, status.HTTP_204_NO_CONTENT)
+    
+
+class Playlist(APIView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.playlist = []
+    
+    def get(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)
+        
+        if room.exists():
+            room = room[0]
+        else:
+            return Response(self.playlist, status=status.HTTP_404_NOT_FOUND)  # Return default if no room
+        
+        host = room.host
+        endpoint = "player/queue"
+        response = execute_spotify_api_request(host, endpoint)
+        
+        if 'error' in response or 'queue' not in response:
+            return Response(self.playlist, status=status.HTTP_200_OK)  # Return default if no queue
+
+        # Initialize the list of songs
+        songs_list = []
+
+        # Iterate over each song in the queue
+        for item in response.get('queue', []):
+            duration = item.get('duration_ms')
+            album_cover = item.get('album', {}).get('images', [{}])[0].get('url')
+            song_id = item.get('id')
+
+            # Get artist names
+            artists_string = ", ".join(artist.get('name') for artist in item.get('artists', []))
+
+            # Add song details to the list
+            songs_list.append({
+                'title': item.get('name'),
+                'artist': artists_string,
+                'duration': duration,
+                'image_url': album_cover,
+                'id': song_id
+            })
+
+        # Update the song queue information
+        self.playlist = songs_list  # Assuming `self.song_queue` is defined to store the list of dictionaries
+
+        self.update_room_queue(room, self.playlist)
+
+        return Response(self.playlist, status=status.HTTP_200_OK)
+    
+    def update_room_queue(self, room, songs_list):
+        current_queue = room.queue
+        if current_queue != songs_list:
+            room.queue = songs_list
+            room.save(update_fields=['queue'])

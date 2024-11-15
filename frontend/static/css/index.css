@@ -6,16 +6,21 @@ body {
 }
 
 #main {
-  position: fixed;
   width: 100%;
   height: 100%;
   left: 0;
   top: 0;
 }
 
+#root {
+  height: auto;  /* Allow scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
 #app {
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .custom-textfield {
@@ -36,7 +41,7 @@ body {
 
 /* Full-screen animated background */
 .background {
-  position: fixed;  /* Make sure the background fills the entire screen */
+  position: fixed; /* Keep it in the background */
   top: 0;
   left: 0;
   width: 100vw;
@@ -44,7 +49,7 @@ body {
   background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
   background-size: 400% 400%;
   animation: Gradient 15s ease infinite;
-  z-index: -1; /* Keep the background behind everything */
+  z-index: -1; /* Ensure it stays in the background */
 }
 
 /* Keyframes for gradient animation */
@@ -59,3 +64,6 @@ body {
     background-position: 0% 50%;
   }
 }
+
+
+

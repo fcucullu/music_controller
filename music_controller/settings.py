@@ -138,3 +138,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REDIRECT_URI = os.getenv('REDIRECT_URI')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 CLIENT_ID = os.getenv('CLIENT_ID')
+DATABASE_URL = os.getenv('DATABASE_URL')

@@ -24,28 +24,33 @@ export default class AddSong extends Component {
 
   handleSearchSubmit = () => {
     if (this.state.query.trim() === "") return;
-
+  
     this.setState({ isLoading: true });
-
-    // Make the search request to the Spotify API
-    fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(this.state.query)}&type=track,artist&limit=10`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer YOUR_ACCESS_TOKEN`, // Replace with a valid access token
-      },
-    })
+  
+    // Call backend to search for songs/artists
+    fetch(`/search?query=${encodeURIComponent(this.state.query)}`)
       .then((response) => response.json())
       .then((data) => {
-        this.setState({
-          searchResults: data.tracks.items, // Store track search results
-          isLoading: false,
-        });
+        if (data.tracks && data.tracks.items) {
+          this.setState({
+            searchResults: data.tracks.items, // Update state with results
+            isLoading: false,
+          });
+        } else {
+          // Handle case where no items are found or the structure is different
+          this.setState({
+            searchResults: [],
+            isLoading: false,
+          });
+          console.error("No items found or unexpected response structure:", data);
+        }
       })
       .catch((error) => {
         console.error("Error fetching search results:", error);
         this.setState({ isLoading: false });
       });
   };
+  
 
   render() {
     const { searchResults, isLoading, query } = this.state;
@@ -56,7 +61,7 @@ export default class AddSong extends Component {
           <Typography variant="h4" align="center" style={{ marginBottom: "20px" }}>
             Search for Songs or Artists
           </Typography>
-          
+
           <TextField
             label="Search"
             variant="outlined"

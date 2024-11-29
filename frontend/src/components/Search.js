@@ -8,7 +8,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 
-export default class AddSong extends Component {
+export default class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,11 +24,11 @@ export default class AddSong extends Component {
 
   handleSearchSubmit = () => {
     if (this.state.query.trim() === "") return;
-  
+
     this.setState({ isLoading: true });
-  
+
     // Call backend to search for songs/artists
-    fetch(`/search?query=${encodeURIComponent(this.state.query)}`)
+    fetch(`/spotify/search?q=${encodeURIComponent(this.state.query)}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.tracks && data.tracks.items) {
@@ -42,7 +42,11 @@ export default class AddSong extends Component {
             searchResults: [],
             isLoading: false,
           });
-          console.error("No items found or unexpected response structure:", data);
+          console.error(
+            "No items found or unexpected response structure:",
+            data,
+            this.state.query
+          );
         }
       })
       .catch((error) => {
@@ -50,35 +54,53 @@ export default class AddSong extends Component {
         this.setState({ isLoading: false });
       });
   };
-  
 
   render() {
     const { searchResults, isLoading, query } = this.state;
 
     return (
-      <Grid container justifyContent="center" style={{ minHeight: "100vh", overflowY: "auto" }}>
+      <Grid
+        container
+        justifyContent="center"
+        style={{ minHeight: "100vh", overflowY: "auto" }}
+      >
         <Grid item xs={12} md={6} style={{ padding: "20px" }}>
-          <Typography variant="h4" align="center" style={{ marginBottom: "20px" }}>
-            Search for Songs or Artists
-          </Typography>
-
           <TextField
-            label="Search"
+            label="Search for Songs or Artists"
             variant="outlined"
             fullWidth
             value={query}
             onChange={this.handleSearchChange}
             style={{ marginBottom: "20px" }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={this.handleSearchSubmit}
-            disabled={isLoading}
+
+          <Grid
+            item
+            xs={12}
+            style={{
+              display: "flex", // Apply flex here to the Grid container
+              justifyContent: "center", // Center the buttons
+              gap: "10px", // Space between buttons
+              paddingBottom: "10px",
+            }}
           >
-            {isLoading ? "Searching..." : "Search"}
-          </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => this.props.updateShowSearch(false)}
+            >
+              Go back
+            </Button>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSearchSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? "Searching..." : "Search"}
+            </Button>
+          </Grid>
 
           {isLoading && <LinearProgress style={{ marginTop: "20px" }} />}
 
@@ -109,7 +131,11 @@ export default class AddSong extends Component {
             </Grid>
           )}
           {searchResults.length === 0 && !isLoading && (
-            <Typography variant="body1" align="center" style={{ marginTop: "20px" }}>
+            <Typography
+              variant="body1"
+              align="center"
+              style={{ marginTop: "20px" }}
+            >
               No results found.
             </Typography>
           )}

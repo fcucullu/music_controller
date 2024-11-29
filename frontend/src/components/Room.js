@@ -3,7 +3,7 @@ import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
 import MusicPlayer from "./MusicPlayer";
 import Playlist from "./Playlist";
-import AddSong from "./AddSong"
+import Search from "./Search";
 
 export default class Room extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class Room extends Component {
       isHost: false,
       showSettings: false,
       showPlaylist: false,
-      showAddSong: false,
+      showSearch: false,
       spotifyAuthenticated: false,
       song: {},
     };
@@ -25,7 +25,7 @@ export default class Room extends Component {
 
     this.updateShowSettings = this.updateShowSettings.bind(this);
     this.updateShowPlaylist = this.updateShowPlaylist.bind(this);
-    this.updateShowAddSong = this.updateShowAddSong.bind(this);
+    this.updateShowSearch = this.updateShowSearch.bind(this);
 
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
@@ -105,13 +105,12 @@ export default class Room extends Component {
     });
   }
 
-
-  //############### ADDSONG SECTION ##########################
+  //############### SEARCH SECTION ##########################
   addSongButtonPressed() {
-    this.updateShowAddSong(true);
+    this.updateShowSearch(true);
   }
 
-  renderAddSong() {
+  renderSearch() {
     return (
       <Grid container spacing={1}>
         <Grid item xs={12} align="center">
@@ -121,41 +120,14 @@ export default class Room extends Component {
         </Grid>
         <MusicPlayer {...this.state.song} />
 
-        <AddSong />
-
-        <Grid
-          item
-          xs={12}
-          style={{
-            display: "flex", // Apply flex here to the Grid container
-            justifyContent: "center", // Center the buttons
-            gap: "10px", // Space between buttons
-            paddingBottom: '10px'
-          }}
-        >
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => this.updateShowAddSong(false)}
-          >
-            Go back
-          </Button>
-
-          <Button
-            variant="contained"
-            color="primary"
-            //onClick=()
-          >
-            Search
-          </Button>
-        </Grid>
+        <Search updateShowSearch={this.updateShowSearch} />
       </Grid>
     );
   }
 
-  updateShowAddSong(value) {
+  updateShowSearch(value) {
     this.setState({
-      showAddSong: value,
+      showSearch: value,
     });
   }
 
@@ -196,7 +168,10 @@ export default class Room extends Component {
           <Button
             variant="contained"
             style={{ backgroundColor: "#23D5AB", color: "#fff" }}
-            onClick={this.addSongButtonPressed}
+            onClick={() => {
+              this.updateShowPlaylist(false);
+              this.addSongButtonPressed();
+            }}
           >
             Add song
           </Button>
@@ -211,7 +186,7 @@ export default class Room extends Component {
             display: "flex", // Apply flex here to the Grid container
             justifyContent: "center", // Center the buttons
             gap: "10px", // Space between buttons
-            paddingBottom: '10px'
+            paddingBottom: "10px",
           }}
         >
           {this.state.isHost ? this.renderSettingsButton() : null}
@@ -289,8 +264,8 @@ export default class Room extends Component {
     if (this.state.showPlaylist) {
       return this.renderPlaylist();
     }
-    if (this.state.showAddSong) {
-      return this.renderAddSong();
+    if (this.state.showSearch) {
+      return this.renderSearch();
     }
     return (
       <Grid container spacing={1}>

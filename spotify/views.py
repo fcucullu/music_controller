@@ -228,7 +228,7 @@ class Playlist(APIView):
 
 class Search(APIView):
     def get(self, request):
-        query = request.GET.get('query', '')
+        query = request.GET.get('q', '')
         session_id = request.session.session_key
         if query:
             print(f"Query>>>> {query}")

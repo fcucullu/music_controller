@@ -1,2 +1,3 @@
 spotify/credentials.py
 .env
+venv

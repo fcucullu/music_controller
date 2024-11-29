@@ -3,6 +3,7 @@ import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
 import MusicPlayer from "./MusicPlayer";
 import Playlist from "./Playlist";
+import Search from "./Search";
 
 export default class Room extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export default class Room extends Component {
       isHost: false,
       showSettings: false,
       showPlaylist: false,
+      showSearch: false,
       spotifyAuthenticated: false,
       song: {},
     };
@@ -23,6 +25,8 @@ export default class Room extends Component {
 
     this.updateShowSettings = this.updateShowSettings.bind(this);
     this.updateShowPlaylist = this.updateShowPlaylist.bind(this);
+    this.updateShowSearch = this.updateShowSearch.bind(this);
+
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
 
@@ -101,14 +105,29 @@ export default class Room extends Component {
     });
   }
 
+  //############### SEARCH SECTION ##########################
   addSongButtonPressed() {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch("/api/leave-room", requestOptions).then((_response) => {
-      this.props.leaveRoomCallback();
-      this.props.history.push("/");
+    this.updateShowSearch(true);
+  }
+
+  renderSearch() {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Typography variant="h4" component="h4">
+            Room Code: {this.roomCode}
+          </Typography>
+        </Grid>
+        <MusicPlayer {...this.state.song} />
+
+        <Search updateShowSearch={this.updateShowSearch} />
+      </Grid>
+    );
+  }
+
+  updateShowSearch(value) {
+    this.setState({
+      showSearch: value,
     });
   }
 
@@ -149,7 +168,10 @@ export default class Room extends Component {
           <Button
             variant="contained"
             style={{ backgroundColor: "#23D5AB", color: "#fff" }}
-            onClick={this.addSongButtonPressed}
+            onClick={() => {
+              this.updateShowPlaylist(false);
+              this.addSongButtonPressed();
+            }}
           >
             Add song
           </Button>
@@ -164,7 +186,7 @@ export default class Room extends Component {
             display: "flex", // Apply flex here to the Grid container
             justifyContent: "center", // Center the buttons
             gap: "10px", // Space between buttons
-            paddingBottom: '10px'
+            paddingBottom: "10px",
           }}
         >
           {this.state.isHost ? this.renderSettingsButton() : null}
@@ -187,7 +209,7 @@ export default class Room extends Component {
     });
   }
 
-  //SETTINGS SECTION
+  //#####################################   SETTINGS SECTION   #####################################
   updateShowSettings(value) {
     this.setState({
       showSettings: value,
@@ -241,6 +263,9 @@ export default class Room extends Component {
     }
     if (this.state.showPlaylist) {
       return this.renderPlaylist();
+    }
+    if (this.state.showSearch) {
+      return this.renderSearch();
     }
     return (
       <Grid container spacing={1}>

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework import status
@@ -81,9 +82,7 @@ class CurrentSong(APIView):
         else:
             return Response(self.song, status=status.HTTP_404_NOT_FOUND)  # Return default if no room
         
-        host = room.host
-        endpoint = "player/currently-playing"
-        response = execute_spotify_api_request(host, endpoint)
+        response = currenly_playing(room.host)
         
         if 'error' in response or 'item' not in response:
             return Response(self.song, status=status.HTTP_200_OK)  # Return default if no song playing
@@ -185,9 +184,7 @@ class Playlist(APIView):
         else:
             return Response(self.playlist, status=status.HTTP_404_NOT_FOUND)  # Return default if no room
         
-        host = room.host
-        endpoint = "player/queue"
-        response = execute_spotify_api_request(host, endpoint)
+        response = queue(room.host)
         
         if 'error' in response or 'queue' not in response:
             return Response(self.playlist, status=status.HTTP_200_OK)  # Return default if no queue
@@ -225,3 +222,20 @@ class Playlist(APIView):
         if current_queue != songs_list:
             room.queue = songs_list
             room.save(update_fields=['queue'])
+
+
+class Search(APIView):
+    def get(self, request):
+        query = request.GET.get('q')
+        search_type  = request.GET.get('type')
+        session_id = request.session.session_key
+        if query:
+            search_results = search_song(session_id, query, search_type )
+            return JsonResponse(search_results)
+        return JsonResponse({'Error': 'No query provided'}, status=400)
+
+
+class AddSong(APIView):
+    def post(self, request, format=None):
+        #WRITE SOMETHING HERE
+        pass

@@ -28,7 +28,7 @@ export default class Search extends Component {
     this.setState({ isLoading: true });
 
     // Call backend to search for songs/artists
-    fetch(`/spotify/search?q=${encodeURIComponent(this.state.query)}`)
+    fetch(`/spotify/search?q=${encodeURIComponent(this.state.query)}&type=artist%2Ctrack`)
       .then((response) => response.json())
       .then((data) => {
         if (data.tracks && data.tracks.items) {
@@ -45,7 +45,6 @@ export default class Search extends Component {
           console.error(
             "No items found or unexpected response structure:",
             data,
-            this.state.query
           );
         }
       })
@@ -130,15 +129,7 @@ export default class Search extends Component {
               ))}
             </Grid>
           )}
-          {searchResults.length === 0 && !isLoading && (
-            <Typography
-              variant="body1"
-              align="center"
-              style={{ marginTop: "20px" }}
-            >
-              No results found.
-            </Typography>
-          )}
+          
         </Grid>
       </Grid>
     );

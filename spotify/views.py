@@ -82,9 +82,7 @@ class CurrentSong(APIView):
         else:
             return Response(self.song, status=status.HTTP_404_NOT_FOUND)  # Return default if no room
         
-        host = room.host
-        endpoint = "player/currently-playing"
-        response = execute_spotify_api_request(host, endpoint)
+        response = currenly_playing(room.host)
         
         if 'error' in response or 'item' not in response:
             return Response(self.song, status=status.HTTP_200_OK)  # Return default if no song playing
@@ -228,12 +226,11 @@ class Playlist(APIView):
 
 class Search(APIView):
     def get(self, request):
-        query = request.GET.get('q', '')
+        query = request.GET.get('q')
+        search_type  = request.GET.get('type')
         session_id = request.session.session_key
         if query:
-            print(f"Query>>>> {query}")
-            search_results = search_song(session_id, query)
-            print(f"Query>>>> {search_results}")
+            search_results = search_song(session_id, query, search_type )
             return JsonResponse(search_results)
         return JsonResponse({'Error': 'No query provided'}, status=400)
 

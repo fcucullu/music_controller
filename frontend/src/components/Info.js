@@ -1,65 +1,69 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Button, Typography, IconButton } from "@material-ui/core";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
-import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
-
+import { Grid, Button, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-const pages = { JOIN: "pages.join", CREATE: "pages.create" };
+export default function MemePage() {
+  const [memeUrl, setMemeUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-export default function Info(props) {
-  const [page, setPage] = useState(pages.JOIN);
-
-  function joinInfo() {
-    return "Join page";
-  }
-
-  function createInfo() {
-    return "Create page";
-  }
-
-  /* This is replace  the componentDidMount and componentWillUnmount in Functional Components */
-  useEffect(() => {
-    {
-      /* This section the componentDidMount*/
+  // Fetch a random meme
+  const fetchRandomMeme = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("https://api.imgflip.com/get_memes"); // API endpoint for fetching memes
+      const data = await response.json();
+      const randomMeme = data.data.memes[Math.floor(Math.random() * data.data.memes.length)];
+      setMemeUrl(randomMeme.url);
+    } catch (error) {
+      console.error("Error fetching meme:", error);
+    } finally {
+      setIsLoading(false);
     }
-    return () => {
-      /* This section the componentWillUnmount*/
-    };
-  });
+  };
+
+  // Fetch meme when the component mounts
+  useEffect(() => {
+    fetchRandomMeme();
+  }, []);
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} direction="column" alignItems="center">
       <Grid item xs={12} align="center">
-        <Typography component="h4" variant="h4">
-          What's this app?
+        <Typography component="h4" variant="h5" style={{ marginBottom: "20px" }}>
+          Take a random meme for your party!
         </Typography>
       </Grid>
 
       <Grid item xs={12} align="center">
-        <Typography variant="body1">
-          {page === pages.JOIN ? joinInfo() : createInfo()}
-        </Typography>
+        {isLoading ? (
+          <Typography variant="body1">Loading meme...</Typography>
+        ) : memeUrl ? (
+          <img src={memeUrl} alt="Random Meme" style={{ maxWidth: "100%", maxHeight: "500px", marginBottom: "20px" }} />
+        ) : (
+          <Typography variant="body1">Failed to load meme</Typography>
+        )}
       </Grid>
 
-      <Grid item xs={12} align="center">
-        <IconButton
-          onClick={() => {
-            page === pages.CREATE ? setPage(pages.JOIN) : setPage(pages.CREATE);
-          }}
-        >
-          {page === pages.CREATE ? (
-            <NavigateBeforeIcon />
-          ) : (
-            <NavigateNextIcon />
-          )}
-        </IconButton>
-      </Grid>
+      <Grid item xs={12} container justifyContent="center" spacing={2}>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => window.history.back()} // Button to go back
+          >
+            Go Back
+          </Button>
+        </Grid>
 
-      <Grid item xs={12} align="center">
-        <Button color="secondary" variant="contained" to="/" component={Link}>
-          Take me Home!
-        </Button>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={fetchRandomMeme} // Button to refresh the meme
+          >
+            Refresh Meme
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );

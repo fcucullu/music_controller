@@ -31,7 +31,11 @@ export default class Search extends Component {
     this.setState({ isLoading: true });
 
     // Call backend to search for songs/artists
-    fetch(`/spotify/search?q=${encodeURIComponent(this.state.query)}&type=artist%2Ctrack`)
+    fetch(
+      `/spotify/search?q=${encodeURIComponent(
+        this.state.query
+      )}&type=artist%2Ctrack`
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.tracks && data.tracks.items) {
@@ -45,7 +49,10 @@ export default class Search extends Component {
             searchResults: [],
             isLoading: false,
           });
-          console.error("No items found or unexpected response structure:", data);
+          console.error(
+            "No items found or unexpected response structure:",
+            data
+          );
         }
       })
       .catch((error) => {
@@ -55,17 +62,31 @@ export default class Search extends Component {
   };
 
   handleAddSong = (song) => {
-    // Simulate adding the song to the playlist
-    console.log("Song added:", song);
-    const songName = song.name || "Unknown Song"
+    const songUri = song.uri || "Unknown uri";
 
-    // Set success message
-    this.setState({ successMessage: `"${songName}" was added to the playlist` });
-
-    // Optionally, hide the success message after a short delay
-    setTimeout(() => {
-      this.setState({ successMessage: "" });
-    }, 1000); // Hide after 3 seconds
+    fetch(`/spotify/add-song?uri=${encodeURIComponent(songUri)}`, {
+      method: "POST", // Use POST to match the backend endpoint
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.status !== 204) {
+          // Since the API returns a 204 No Content on success
+          throw new Error("Failed to add song");
+        }
+        const songName = song.name || "Unknown Song";
+        this.setState({
+          successMessage: `"${songName}" was added to the playlist`,
+        });
+        // Clear the success message after a delay
+        setTimeout(() => {
+          this.setState({ successMessage: "" });
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Error adding song:", error);
+      });
   };
 
   render() {

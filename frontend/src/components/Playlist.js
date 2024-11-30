@@ -49,13 +49,13 @@ export default class Playlist extends Component {
         }}
       >
         {playlist.length > 0 ? (
-          playlist.map((song) => (
+          playlist.map((song, index) => (
             <Grid
               item
               xs={12}
               md={7}
               lg={7}
-              key={song.id}
+              key={index}
               style={{ paddingBottom: "10px" }}
             >
               <Card style={{ margin: "0 10px" }}>

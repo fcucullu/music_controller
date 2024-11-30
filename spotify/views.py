@@ -237,5 +237,9 @@ class Search(APIView):
 
 class AddSong(APIView):
     def post(self, request, format=None):
-        #WRITE SOMETHING HERE
-        pass
+        song_uri = request.GET.get('uri')
+        session_id = request.session.session_key
+        if song_uri:
+            add_song(session_id, song_uri)
+        return Response({}, status.HTTP_204_NO_CONTENT)
+        

@@ -6,7 +6,9 @@ import {
   Button,
   Card,
   LinearProgress,
+  Snackbar,
 } from "@material-ui/core";
+import { SnackbarContent } from "@material-ui/core";
 
 export default class Search extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ export default class Search extends Component {
       query: "", // Search query
       searchResults: [], // Search results
       isLoading: false, // Loading state
+      successMessage: "", // Success message to be displayed
     };
   }
 
@@ -42,10 +45,7 @@ export default class Search extends Component {
             searchResults: [],
             isLoading: false,
           });
-          console.error(
-            "No items found or unexpected response structure:",
-            data,
-          );
+          console.error("No items found or unexpected response structure:", data);
         }
       })
       .catch((error) => {
@@ -54,8 +54,21 @@ export default class Search extends Component {
       });
   };
 
+  handleAddSong = (song) => {
+    // Simulate adding the song to the playlist
+    console.log("Song added:", song);
+
+    // Set success message
+    this.setState({ successMessage: "The song was added to the playlist" });
+
+    // Optionally, hide the success message after a short delay
+    setTimeout(() => {
+      this.setState({ successMessage: "" });
+    }, 1000); // Hide after 3 seconds
+  };
+
   render() {
-    const { searchResults, isLoading, query } = this.state;
+    const { searchResults, isLoading, query, successMessage } = this.state;
 
     return (
       <Grid
@@ -67,6 +80,7 @@ export default class Search extends Component {
           <TextField
             label="Search for Songs or Artists"
             variant="outlined"
+            //className="custom-textfield"
             fullWidth
             value={query}
             onChange={this.handleSearchChange}
@@ -106,8 +120,15 @@ export default class Search extends Component {
           {searchResults.length > 0 && (
             <Grid container spacing={2} style={{ marginTop: "20px" }}>
               {searchResults.map((song) => (
-                <Grid item xs={12} md={6} key={song.id}>
-                  <Card style={{ padding: "10px" }}>
+                <Grid item xs={12} key={song.id} style={{ width: "100%" }}>
+                  <Card
+                    style={{
+                      padding: "10px",
+                      cursor: "pointer",
+                      width: "100%", // Ensure it takes full width of the container
+                    }}
+                    onClick={() => this.handleAddSong(song)} // Handle song click
+                  >
                     <Grid container alignItems="center">
                       <Grid item xs={4} align="center">
                         <img
@@ -129,7 +150,19 @@ export default class Search extends Component {
               ))}
             </Grid>
           )}
-          
+
+          {/* Success Message */}
+          {successMessage && (
+            <Snackbar open={true} autoHideDuration={1000}>
+              <SnackbarContent
+                style={{
+                  backgroundColor: "#4caf50", // Green color for success
+                  color: "#fff", // White text
+                }}
+                message={successMessage}
+              />
+            </Snackbar>
+          )}
         </Grid>
       </Grid>
     );

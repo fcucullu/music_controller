@@ -11,7 +11,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { Button, ButtonGroup, Grid, Typography, IconButton } from "@material-ui/core";
-import AddIcon from "@mui/icons-material/Add";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -67,7 +67,7 @@ export default class HomePage extends Component {
               component={Link}
               style={{ borderRadius: "50%", width: '0.5px', height: '0.5px' }}
             >
-              <AddIcon fontSize="small" />
+              <QuestionMarkIcon fontSize="small" />
             </IconButton>
           </div>
         </Grid>

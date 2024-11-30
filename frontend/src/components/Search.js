@@ -6,7 +6,9 @@ import {
   Button,
   Card,
   LinearProgress,
+  Snackbar,
 } from "@material-ui/core";
+import { SnackbarContent } from "@material-ui/core";
 
 export default class Search extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ export default class Search extends Component {
       query: "", // Search query
       searchResults: [], // Search results
       isLoading: false, // Loading state
+      successMessage: "", // Success message to be displayed
     };
   }
 
@@ -28,7 +31,11 @@ export default class Search extends Component {
     this.setState({ isLoading: true });
 
     // Call backend to search for songs/artists
-    fetch(`/spotify/search?q=${encodeURIComponent(this.state.query)}&type=artist%2Ctrack`)
+    fetch(
+      `/spotify/search?q=${encodeURIComponent(
+        this.state.query
+      )}&type=artist%2Ctrack`
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.tracks && data.tracks.items) {
@@ -44,7 +51,7 @@ export default class Search extends Component {
           });
           console.error(
             "No items found or unexpected response structure:",
-            data,
+            data
           );
         }
       })
@@ -54,8 +61,36 @@ export default class Search extends Component {
       });
   };
 
+  handleAddSong = (song) => {
+    const songUri = song.uri || "Unknown uri";
+
+    fetch(`/spotify/add-song?uri=${encodeURIComponent(songUri)}`, {
+      method: "POST", // Use POST to match the backend endpoint
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.status !== 204) {
+          // Since the API returns a 204 No Content on success
+          throw new Error("Failed to add song");
+        }
+        const songName = song.name || "Unknown Song";
+        this.setState({
+          successMessage: `"${songName}" was added to the playlist`,
+        });
+        // Clear the success message after a delay
+        setTimeout(() => {
+          this.setState({ successMessage: "" });
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Error adding song:", error);
+      });
+  };
+
   render() {
-    const { searchResults, isLoading, query } = this.state;
+    const { searchResults, isLoading, query, successMessage } = this.state;
 
     return (
       <Grid
@@ -67,6 +102,7 @@ export default class Search extends Component {
           <TextField
             label="Search for Songs or Artists"
             variant="outlined"
+            //className="custom-textfield"
             fullWidth
             value={query}
             onChange={this.handleSearchChange}
@@ -106,8 +142,15 @@ export default class Search extends Component {
           {searchResults.length > 0 && (
             <Grid container spacing={2} style={{ marginTop: "20px" }}>
               {searchResults.map((song) => (
-                <Grid item xs={12} md={6} key={song.id}>
-                  <Card style={{ padding: "10px" }}>
+                <Grid item xs={12} key={song.id} style={{ width: "100%" }}>
+                  <Card
+                    style={{
+                      padding: "10px",
+                      cursor: "pointer",
+                      width: "100%", // Ensure it takes full width of the container
+                    }}
+                    onClick={() => this.handleAddSong(song)} // Handle song click
+                  >
                     <Grid container alignItems="center">
                       <Grid item xs={4} align="center">
                         <img
@@ -129,7 +172,19 @@ export default class Search extends Component {
               ))}
             </Grid>
           )}
-          
+
+          {/* Success Message */}
+          {successMessage && (
+            <Snackbar open={true} autoHideDuration={1000}>
+              <SnackbarContent
+                style={{
+                  backgroundColor: "#4caf50", // Green color for success
+                  color: "#fff", // White text
+                }}
+                message={successMessage}
+              />
+            </Snackbar>
+          )}
         </Grid>
       </Grid>
     );

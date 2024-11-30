@@ -103,3 +103,6 @@ def search_song(session_id, query, search_type):
     endpoint = f"search?q={query}&type={search_type}"
     return execute_spotify_api_request(session_id, endpoint)
 
+def add_song(session_id, song_uri):
+    endpoint = f"me/player/queue?uri={song_uri}"
+    return execute_spotify_api_request(session_id, endpoint, post_=True)

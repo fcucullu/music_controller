@@ -1,16 +1,11 @@
 import React, { Component } from "react";
-import {
-  Grid,
-  Typography,
-  Card,
-  LinearProgress,
-} from "@material-ui/core";
+import { Grid, Typography, Card, LinearProgress } from "@material-ui/core";
 
 export default class Playlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlist: [],  // All songs will be stored here
+      playlist: [], // All songs will be stored here
       isLoading: true,
     };
   }
@@ -44,20 +39,32 @@ export default class Playlist extends Component {
     }
 
     return (
-      <Grid container justifyContent="center" style={{ minHeight: "100vh", overflowY: "auto" }}>
-        {/* Center container */}
+      <Grid
+        container
+        justifyContent={playlist.length > 0 ? "center" : "flex-start"} // Adjust alignment based on content
+        style={{
+          minHeight: playlist.length > 0 ? "100vh" : "auto",
+          overflowY: "auto",
+          paddingTop: "20px",
+        }}
+      >
         {playlist.length > 0 ? (
-          playlist.map((song) => (
-            <Grid item xs={12} md={7} lg={7} key={song.id} style={{ paddingBottom: "10px" }}>
-              {/* Song item */}
+          playlist.map((song, index) => (
+            <Grid
+              item
+              xs={12}
+              md={7}
+              lg={7}
+              key={index}
+              style={{ paddingBottom: "10px" }}
+            >
               <Card style={{ margin: "0 10px" }}>
-                {/* Card margin */}
                 <Grid container alignItems="center">
                   <Grid item xs={4} align="center">
                     <img
                       src={song.image_url}
-                      height="80px" // Reduced image size
-                      width="80px"  // Reduced image size
+                      height="80px"
+                      width="80px"
                       alt={song.title}
                     />
                   </Grid>
@@ -75,7 +82,11 @@ export default class Playlist extends Component {
           ))
         ) : (
           <Grid item xs={12}>
-            <Typography variant="h6" align="center">
+            <Typography
+              variant="h6"
+              align="center"
+              style={{ padding: "20px 0" }}
+            >
               No songs in the playlist.
             </Typography>
           </Grid>

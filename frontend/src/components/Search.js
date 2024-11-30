@@ -57,9 +57,10 @@ export default class Search extends Component {
   handleAddSong = (song) => {
     // Simulate adding the song to the playlist
     console.log("Song added:", song);
+    const songName = song.name || "Unknown Song"
 
     // Set success message
-    this.setState({ successMessage: "The song was added to the playlist" });
+    this.setState({ successMessage: `"${songName}" was added to the playlist` });
 
     // Optionally, hide the success message after a short delay
     setTimeout(() => {

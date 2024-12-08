@@ -228,9 +228,12 @@ class Search(APIView):
     def get(self, request):
         query = request.GET.get('q')
         search_type  = request.GET.get('type')
-        session_id = request.session.session_key
+        
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        
         if query:
-            search_results = search_song(session_id, query, search_type )
+            search_results = search_song(room.host, query, search_type )
             return JsonResponse(search_results)
         return JsonResponse({'Error': 'No query provided'}, status=400)
 
@@ -238,8 +241,11 @@ class Search(APIView):
 class AddSong(APIView):
     def post(self, request, format=None):
         song_uri = request.GET.get('uri')
-        session_id = request.session.session_key
+        
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+        
         if song_uri:
-            add_song(session_id, song_uri)
+            add_song(room.host, song_uri)
         return Response({}, status.HTTP_204_NO_CONTENT)
         

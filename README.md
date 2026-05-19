@@ -1,22 +1,21 @@
-## Description
-This code is part of the software I developed for a project that integrates Django with React to offer users a personalized experience for managing their music. 
+# Music Controller
 
-Through my exploration of how users engage with Spotify in collaborative settings during meetings and gatherings, I recognized the need for a more user-friendly way to access Spotify’s features. This led me to develop an application designed to enhance the collaborative experience, allowing users to easily share playlists and enjoy the premium features of Spotify, even in home party environments. My goal was to democratize access to these capabilities, enabling everyone to fully enjoy their music experience together, regardless of their individual subscription status.
+> Collaborative Spotify controller. Share playlists and premium features in group settings, built with Django and React.
 
-## Resources Used
-### Backend Development
-- Django – for backend logic, API management and user permissions
-- Django REST Framework – to build API endpoints for the frontend and Spotify
+## Problem
 
-### Frontend Development
-- JavaScript
-- React – for creating a dynamic and responsive user interface
-- Material UI
-- HTML/CSS
+In collaborative settings like parties or meetings, everyone wants to queue songs but only one person has Spotify Premium. Needed a way to democratize playlist control.
 
-### Database
-- PostgreSQL
+## Solution
 
-### Other Tools
-- Docker
-- Git
+Full-stack application integrating with the Spotify API. Users join a shared session and can browse, queue, and vote on tracks regardless of their subscription status.
+
+## Tech Stack
+
+- Python, Django (backend)
+- React (frontend)
+- Spotify Web API
+
+## Author
+
+**Francisco Cucullu** | [franciscocucullu.com](https://franciscocucullu.com)
